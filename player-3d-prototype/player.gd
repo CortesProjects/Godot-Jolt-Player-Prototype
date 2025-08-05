@@ -3,12 +3,14 @@ extends CharacterBody3D
 @export var speed: float = 5.0
 @export var mouse_sensitivity: float = 0.002
 @export var jump_velocity: float = 10.5
-@export var crouch_height: float = 1.0
+@export var crouch_height: float = 1.5
 @export var stand_height: float = 2.0
 @export var crouch_jump_boost: float = 2.0
 
 var is_crouching := false
 var has_crouch_jumped := false
+var head_offset_from_top: float
+var target_head_y: float
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 var head: Node3D
@@ -30,6 +32,11 @@ func _ready():
 
 	capsule_shape = capsule_shape.duplicate()
 	collision_shape.shape = capsule_shape
+	
+	var shape_top_y = collision_shape.position.y + (capsule_shape.height / 2.0)
+	head_offset_from_top = head.position.y - shape_top_y
+	target_head_y = head.position.y
+
 
 func _unhandled_input(event):
 	if event is InputEventMouseMotion and is_multiplayer_authority():
@@ -93,6 +100,9 @@ func _physics_process(delta):
 	var just_landed = was_in_air and is_on_floor()
 	if just_landed and is_crouching:
 		rpc("sync_crouch_state", is_crouching, true)
+		
+	head.position.y = lerp(head.position.y, target_head_y, delta * 10.0)
+
 
 @rpc("any_peer", "reliable")
 func sync_crouch_state(state: bool, was_on_floor: bool):
@@ -101,15 +111,14 @@ func sync_crouch_state(state: bool, was_on_floor: bool):
 
 func _update_crouch_state(was_on_floor := true):
 	if is_crouching:
+		capsule_shape.height = crouch_height
 		if was_on_floor:
-			capsule_shape.height = crouch_height
 			collision_shape.position = original_position - Vector3(0, (stand_height - crouch_height) / 2.0, 0)
 		else:
-			capsule_shape.height = crouch_height
 			collision_shape.position = original_position + Vector3(0, (stand_height - crouch_height) / 2.0, 0)
 	else:
 		capsule_shape.height = stand_height
 		collision_shape.position = original_position
 
 	var shape_top_y = collision_shape.position.y + (capsule_shape.height / 2.0)
-	head.position.y = shape_top_y
+	target_head_y = shape_top_y + head_offset_from_top
