@@ -1,0 +1,126 @@
+[gd_scene load_steps=9 format=3 uid="uid://dlig10mrj57bc"]
+
+[ext_resource type="Script" uid="uid://bvlexfs1gsm8f" path="res://world.gd" id="1_f3sb7"]
+[ext_resource type="PackedScene" uid="uid://cthoxrx3inbcn" path="res://player.tscn" id="2_fj7yv"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_f3sb7"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_fj7yv"]
+sky_material = SubResource("ProceduralSkyMaterial_f3sb7")
+
+[sub_resource type="Environment" id="Environment_tlwt5"]
+background_mode = 2
+sky = SubResource("Sky_fj7yv")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_gv5m4"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_f3sb7"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_fj7yv"]
+
+[node name="world" type="Node3D"]
+script = ExtResource("1_f3sb7")
+player_scene = ExtResource("2_fj7yv")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_tlwt5")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Floor" type="CSGMesh3D" parent="."]
+transform = Transform3D(50, 0, 0, 0, 1, 0, 0, 0, 50, 0, -0.5, 0)
+use_collision = true
+mesh = SubResource("BoxMesh_gv5m4")
+
+[node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
+use_collision = true
+
+[node name="obst_crouch" type="CSGMesh3D" parent="CSGCombiner3D"]
+transform = Transform3D(1.6922, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.501, -1.5)
+mesh = SubResource("BoxMesh_f3sb7")
+
+[node name="obst_spray_pattern" type="CSGMesh3D" parent="CSGCombiner3D"]
+transform = Transform3D(4.21695, 0, 0, 0, 5.52182, 0, 0, 0, 1, 0, 2.84063, 9.45468)
+mesh = SubResource("BoxMesh_f3sb7")
+
+[node name="obst_jump_+_crouch" type="CSGMesh3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 2.93141, 3, 1.5, 1)
+mesh = SubResource("BoxMesh_f3sb7")
+
+[node name="obst_jump_height" type="CSGMesh3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 2.93141, 3, 1.09, 3.93369)
+mesh = SubResource("BoxMesh_f3sb7")
+
+[node name="obst_jump" type="CSGMesh3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 2.93141, 3, 1.5, 1)
+mesh = SubResource("BoxMesh_f3sb7")
+
+[node name="obst_max_slope" type="CSGMesh3D" parent="CSGCombiner3D"]
+transform = Transform3D(1.98797, 0, 0, 0, 0.694658, -4.26152, 0, 0.71934, 4.1153, -2.30856, 1.6, -1.494)
+mesh = SubResource("BoxMesh_f3sb7")
+
+[node name="obst_pre_max_slope" type="CSGMesh3D" parent="CSGCombiner3D"]
+transform = Transform3D(1.98797, 0, 0, 0, 0.707107, -4.18904, 0, 0.707107, 4.18904, -5.30488, 1.6, -1.48374)
+mesh = SubResource("BoxMesh_f3sb7")
+
+[node name="obst_pre_max_slope2" type="CSGMesh3D" parent="CSGCombiner3D"]
+transform = Transform3D(50, 0, 0, 0, 35.3553, -35.3553, 0, 35.3553, 35.3553, -8.25205, -23.7181, 7.64829)
+mesh = SubResource("SphereMesh_fj7yv")
+
+[node name="crouch" type="Label3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.003, 1.34, -0.95)
+text = "0 - 1.501m 
+min crouch height
+\"crtl\""
+
+[node name="spraypattern" type="Label3D" parent="CSGCombiner3D"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.00410435, 0.281536, 8.9066)
+text = "spray pattern tester"
+
+[node name="jump+crouch" type="Label3D" parent="CSGCombiner3D"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 2.47, 1.23, 0.327)
+text = "0 - 1.5m vertical
+jump + crouch reach"
+
+[node name="jumpheight" type="Label3D" parent="CSGCombiner3D"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 2.47, 0.819, 3.136)
+text = "0 - 1.09m vertical
+jump height limit"
+
+[node name="maxslope" type="Label3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 0.71934, 0.694658, 0, -0.694658, 0.71934, -2.29, 1.23, -0.441)
+text = "46.0 rotation
+max climable slope"
+
+[node name="premaxslope" type="Label3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, -5.318, 1.23, -0.406)
+text = "45.0 rotation
+pre max climable slope"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Server" type="Button" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+text = "Host
+"
+
+[node name="Client" type="Button" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+text = "Join"
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://cthoxrx3inbcn")
+spawn_path = NodePath("..")
+
+[connection signal="pressed" from="CanvasLayer/VBoxContainer/Server" to="." method="_on_server_pressed"]
+[connection signal="pressed" from="CanvasLayer/VBoxContainer/Client" to="." method="_on_client_pressed"]
