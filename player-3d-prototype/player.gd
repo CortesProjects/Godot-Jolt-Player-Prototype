@@ -6,11 +6,14 @@ extends CharacterBody3D
 @export var crouch_height: float = 1.5
 @export var stand_height: float = 2.0
 @export var crouch_jump_boost: float = 2.0
+@export var climable_height: float = 10.0 #higher short height
 
 var is_crouching := false
 var has_crouch_jumped := false
 var head_offset_from_top: float
 var target_head_y: float
+var is_ascending := false
+var ascend_target_position: Vector3
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 var head: Node3D
@@ -52,20 +55,30 @@ func _physics_process(delta):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 
+	##Ledge Climbing
+	if is_ascending:
+		global_position = lerp(global_position, ascend_target_position, delta * 5.0)
+		if global_position.distance_to(ascend_target_position) < 0.1:
+			is_ascending = false
+			velocity = Vector3.ZERO
+		return
 
+	if not is_on_floor() and velocity.y > 0 and $RayCast3D.is_colliding():
+		var collision_point = $RayCast3D.get_collision_point()
+		ascend_target_position = collision_point + Vector3(0, capsule_shape.height / climable_height, 0)
+		is_ascending = true
+	##Jump
 	if is_on_floor():
 		has_crouch_jumped = false
 		if Input.is_action_just_pressed("jump"):
 			velocity.y = jump_velocity
 	else:
-		
-		
 		velocity.y -= gravity * delta
-			
+	
 	if Input.is_action_just_pressed("quit"):
 		$"../".exit_game(name.to_int())
 
-	# Handle crouching
+	##Crouching Tuck up & Duck down
 	if Input.is_action_pressed("crouch"):
 		if not is_crouching:
 			is_crouching = true
@@ -122,3 +135,10 @@ func _update_crouch_state(was_on_floor := true):
 
 	var shape_top_y = collision_shape.position.y + (capsule_shape.height / 2.0)
 	target_head_y = shape_top_y + head_offset_from_top
+
+
+func Teleport_on_jump():
+	var collision_point = $RayCast3D.get_collision_point()
+	var new_position = collision_point + Vector3(0, capsule_shape.height / 2.0, 0)
+	global_position = new_position
+	velocity.y = 0

@@ -49,6 +49,10 @@ mesh = SubResource("BoxMesh_f3sb7")
 transform = Transform3D(4.21695, 0, 0, 0, 5.52182, 0, 0, 0, 1, 0, 2.84063, 9.45468)
 mesh = SubResource("BoxMesh_f3sb7")
 
+[node name="obsta_ledge" type="CSGMesh3D" parent="CSGCombiner3D"]
+transform = Transform3D(4.21695, 0, 0, 0, 2.86159, 0, 0, 0, 1, 4.555, 1.631, 9.455)
+mesh = SubResource("BoxMesh_f3sb7")
+
 [node name="obst_jump_+_crouch" type="CSGMesh3D" parent="CSGCombiner3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 2.93141, 3, 1.5, 1)
 mesh = SubResource("BoxMesh_f3sb7")
@@ -82,6 +86,10 @@ min crouch height
 [node name="spraypattern" type="Label3D" parent="CSGCombiner3D"]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.00410435, 0.281536, 8.9066)
 text = "spray pattern tester"
+
+[node name="climableledge" type="Label3D" parent="CSGCombiner3D"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 4.58673, 0.313749, 8.9066)
+text = "max climable ledge"
 
 [node name="jump+crouch" type="Label3D" parent="CSGCombiner3D"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 2.47, 1.23, 0.327)
